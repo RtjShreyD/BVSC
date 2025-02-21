@@ -122,6 +122,19 @@ def dashboard():
 @app.route('/details/<int:year>/<int:month>')
 def call_details(year, month):
     try:
+        page = request.args.get("page", 1, type=int)
+        per_page = 10  # 🔹 Change as needed
+
+        # Query total records count
+        total_records = (
+            db.session.query(func.count(BVSCalls.id))
+            .filter(func.YEAR(BVSCalls.CallTime) == year, func.MONTH(BVSCalls.CallTime) == month)
+            .scalar()
+        )
+        
+        total_pages = (total_records // per_page) + (1 if total_records % per_page else 0)
+
+        # Paginate data
         details = (
             db.session.query(
                 BVSCalls.CallFrom,
@@ -133,15 +146,25 @@ def call_details(year, month):
                 BVSCalls.Status
             )
             .filter(func.YEAR(BVSCalls.CallTime) == year, func.MONTH(BVSCalls.CallTime) == month)
+            .order_by(BVSCalls.CallTime.desc())
+            .offset((page - 1) * per_page)
+            .limit(per_page)
             .all()
         )
 
-        return render_template("details.html", details=details, year=year, month=month)
+        rendered_html = render_template("details.html", details=details, year=year, month=month)
+        
+        return jsonify({
+            "html": rendered_html,
+            "current_page": page,
+            "total_pages": total_pages
+        })
 
     except SQLAlchemyError as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
     except Exception as e:
         return jsonify({"error": "Something went wrong", "details": str(e)}), 500
+
 
 
 
