@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Call Statistics{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <h2>Call Statistics for {{ year }}</h2>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <canvas id="callsChart"></canvas>
+            <div id="chart-data" 
+                data-labels='{{ labels | tojson | safe }}' 
+                data-callcounts='{{ call_counts | tojson | safe }}' 
+                data-totalcosts='{{ total_costs | tojson | safe }}'>
+            </div>
+        </div>
+    </div>
+{% endblock %}

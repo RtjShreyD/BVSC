@@ -1,8 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from dotenv import load_dotenv
 import os
+from datetime import datetime
+from sqlalchemy import func
 
 load_dotenv()
 
@@ -65,6 +67,49 @@ def get_calls():
         return jsonify({"error": "Database error", "details": str(e)}), 500
     except Exception as e:
         return jsonify({"error": "Something went wrong", "details": str(e)}), 500
+
+
+
+@app.route('/dashboard')
+def dashboard():
+    try:
+        current_year = datetime.now().year
+
+        # Query to get call count and total cost per month for the current year
+        monthly_data = (
+            db.session.query(
+                func.MONTH(BVSCalls.CallTime).label("month"),
+                func.COUNT(BVSCalls.id).label("call_count"),
+                func.SUM(BVSCalls.Cost).label("total_cost")
+            )
+            .filter(func.YEAR(BVSCalls.CallTime) == current_year)
+            .group_by(func.MONTH(BVSCalls.CallTime))
+            .order_by(func.MONTH(BVSCalls.CallTime))
+            .all()
+        )
+
+        print(monthly_data)
+
+        # Prepare data for Chart.js
+        labels = [str(row.month) for row in monthly_data]
+        call_counts = [row.call_count for row in monthly_data]
+        total_costs = [row.total_cost or 0 for row in monthly_data]  # Handle None values
+
+        return render_template(
+            "dashboard.html",
+            labels=labels,
+            call_counts=call_counts,
+            total_costs=total_costs,
+            year=current_year
+        )
+
+    except SQLAlchemyError as e:
+        return jsonify({"error": "Database error", "details": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": "Something went wrong", "details": str(e)}), 500
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
