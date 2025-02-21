@@ -61,19 +61,21 @@
         <div id="details-container" class="mt-4" style="display: none;">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Detailed Call Data</h4>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title">Detailed Call Data</h4>
+                        <!-- 🔹 Pagination Controls -->
+                        <div id="pagination-controls" style="display: none;">
+                            <a href="#" id="prev-page" class="btn btn-sm btn-secondary">« Prev</a>
+                            <span id="page-info">Page 1</span>
+                            <a href="#" id="next-page" class="btn btn-sm btn-secondary">Next »</a>
+                        </div>
+                    </div>
                     <div id="details-content">
                         <p>Click a Year-Month to load details.</p>
-                    </div>
-        
-                    <!-- 🔹 Pagination Controls -->
-                    <div id="pagination-controls" class="text-center mt-3" style="display: none;">
-                        <a href="#" id="prev-page" class="btn btn-sm btn-secondary">« Prev</a>
-                        <span id="page-info">Page 1</span>
-                        <a href="#" id="next-page" class="btn btn-sm btn-secondary">Next »</a>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 {% endblock %}
