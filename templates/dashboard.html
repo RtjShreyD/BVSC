@@ -7,6 +7,7 @@
         <h2>Call Statistics for {{ year }}</h2>
     </div>
 
+    <!-- Bar Chart -->
     <div class="card mt-4">
         <div class="card-body">
             <canvas id="callsChart"></canvas>
@@ -17,4 +18,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Data Table -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h4 class="card-title">Monthly Call Data</h4>
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Year-Month</th>
+                        <th>Number of Calls</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in table_data %}
+                    <tr>
+                        <td>{{ row.year_month }}</td>
+                        <td>{{ row.call_count }}</td>
+                        <td>${{ "%.2f"|format(row.total_cost) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 {% endblock %}

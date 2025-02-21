@@ -93,11 +93,20 @@ def dashboard():
         call_counts = [row.call_count for row in monthly_data]
         total_costs = [row.total_cost or 0 for row in monthly_data]  # Handle None values
 
+        # Prepare data for DataTable
+        table_data = [
+            {"year_month": f"{current_year}-{str(row.month).zfill(2)}", 
+             "call_count": row.call_count, 
+             "total_cost": row.total_cost or 0}
+            for row in monthly_data
+        ]
+
         return render_template(
             "dashboard.html",
             labels=labels,
             call_counts=call_counts,
             total_costs=total_costs,
+            table_data=table_data,
             year=current_year
         )
 
