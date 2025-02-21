@@ -41,7 +41,7 @@ This project is a **Call Statistics Dashboard** that visualizes monthly call tre
 ### Steps to Run
 1. **Clone the Repository**
    ```sh
-   git clone https://github.com/your-repo/call-dashboard.git
+   git clone https://github.com/rtjshreyd/BVSC.git
    cd call-dashboard
    ```
 
