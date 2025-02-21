@@ -42,8 +42,8 @@
                                 {% for row in table_data %}
                                 <tr>
                                     <td>
-                                        <a href="{{ url_for('call_details', year=year, month='%02d' | format(row.month)) }}">
-                                            {{ row.year_month }}
+                                        <a href="#" class="toggle-details" data-year="{{ year }}" data-month="{{ row.month }}">
+                                            {{ row.year_month }} <span class="toggle-icon">▶</span>
                                         </a>
                                     </td>
                                     <td>{{ row.call_count }}</td>
@@ -52,6 +52,18 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔻 NEW BLOCK: Hidden container for call details -->
+        <div id="details-container" class="mt-4" style="display: none;">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Detailed Call Data</h4>
+                    <div id="details-content">
+                        <p>Click a Year-Month to load details.</p>
                     </div>
                 </div>
             </div>

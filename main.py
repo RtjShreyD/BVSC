@@ -119,37 +119,30 @@ def dashboard():
         return jsonify({"error": "Something went wrong", "details": str(e)}), 500
 
 # 🔵 Drill-down View - Extension-wise Breakdown
-@app.route('/details/<year>/<month>')
+@app.route('/details/<int:year>/<int:month>')
 def call_details(year, month):
     try:
-        print(year)
-        # Fetch call details grouped by extension (CallFrom)
-        extension_data = (
+        details = (
             db.session.query(
-                BVSCalls.CallFrom.label("extension"),
-                func.COUNT(BVSCalls.id).label("call_count"),
-                func.SUM(BVSCalls.Cost).label("total_cost")
+                BVSCalls.CallFrom,
+                BVSCalls.CallTo,
+                BVSCalls.CallTime,
+                BVSCalls.Duration,
+                BVSCalls.Billing,
+                BVSCalls.Cost,
+                BVSCalls.Status
             )
             .filter(func.YEAR(BVSCalls.CallTime) == year, func.MONTH(BVSCalls.CallTime) == month)
-            .group_by(BVSCalls.CallFrom)
-            .order_by(func.SUM(BVSCalls.Cost).desc())  # Sort by highest cost
             .all()
         )
 
-        # Format data for rendering
-        details = [
-            {"extension": row.extension, 
-             "call_count": row.call_count, 
-             "total_cost": row.total_cost or 0}
-            for row in extension_data
-        ]
-
-        return render_template("details.html", year=year, month=month, details=details)
+        return render_template("details.html", details=details, year=year, month=month)
 
     except SQLAlchemyError as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
     except Exception as e:
         return jsonify({"error": "Something went wrong", "details": str(e)}), 500
+
 
 
 if __name__ == '__main__':

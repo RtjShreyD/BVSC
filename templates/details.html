@@ -1,36 +1,29 @@
-{% extends "base.html" %}
-
-{% block title %}Details for {{ year }}-{{ month }}{% endblock %}
-
-{% block content %}
-<div class="container mt-4">
-    <div class="text-center">
-        <h2>Call Details for {{ year }}-{{ month }}</h2>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary my-3">Back to Dashboard</a>
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title text-center">Extension-wise Breakdown</h4>
-            <table class="table table-bordered table-hover">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Extension</th>
-                        <th>Number of Calls</th>
-                        <th>Total Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in details %}
-                    <tr>
-                        <td>{{ row.extension }}</td>
-                        <td>{{ row.call_count }}</td>
-                        <td>${{ "%.2f"|format(row.total_cost) }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="table-responsive">
+    <h5>Call Details for {{ year }}-{{ month }}</h5>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Call From</th>
+                <th>Call To</th>
+                <th>Call Time</th>
+                <th>Duration</th>
+                <th>Billing</th>
+                <th>Cost</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for call in details %}
+            <tr>
+                <td>{{ call.CallFrom }}</td>
+                <td>{{ call.CallTo }}</td>
+                <td>{{ call.CallTime.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ call.Duration }}</td>
+                <td>{{ call.Billing }}</td>
+                <td>${{ "%.2f"|format(call.Cost) }}</td>
+                <td>{{ call.Status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-{% endblock %}
