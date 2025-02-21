@@ -3,45 +3,54 @@
 {% block title %}Dashboard - Call Statistics{% endblock %}
 
 {% block content %}
-    <div class="text-center">
-        <h2>Call Statistics for {{ year }}</h2>
-    </div>
+    <div class="container-fluid mt-4">
+        <div class="text-center">
+            <h2>Call Statistics for {{ year }}</h2>
+        </div>
 
-    <!-- Bar Chart -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <canvas id="callsChart"></canvas>
-            <div id="chart-data" 
-                data-labels='{{ labels | tojson | safe }}' 
-                data-callcounts='{{ call_counts | tojson | safe }}' 
-                data-totalcosts='{{ total_costs | tojson | safe }}'>
+        <!-- Flexbox Row Layout -->
+        <div class="row mt-4 d-flex justify-content-between">
+            <!-- Left Column: Bar Chart -->
+            <div class="col-lg-6 d-flex">
+                <div class="card flex-fill w-100">
+                    <div class="card-body">
+                        <h4 class="card-title text-center mb-5">Monthly Call Trends</h4>
+                        <canvas id="callsChart"></canvas>
+                        <div id="chart-data" 
+                            data-labels='{{ labels | tojson | safe }}' 
+                            data-callcounts='{{ call_counts | tojson | safe }}' 
+                            data-totalcosts='{{ total_costs | tojson | safe }}'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Data Table -->
+            <div class="col-lg-6 d-flex">
+                <div class="card flex-fill w-100">
+                    <div class="card-body">
+                        <h4 class="card-title text-center">Monthly Call Data</h4>
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Year-Month</th>
+                                    <th>Number of Calls</th>
+                                    <th>Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in table_data %}
+                                <tr>
+                                    <td>{{ row.year_month }}</td>
+                                    <td>{{ row.call_count }}</td>
+                                    <td>${{ "%.2f"|format(row.total_cost) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Data Table -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <h4 class="card-title">Monthly Call Data</h4>
-            <table class="table table-bordered table-hover">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Year-Month</th>
-                        <th>Number of Calls</th>
-                        <th>Total Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in table_data %}
-                    <tr>
-                        <td>{{ row.year_month }}</td>
-                        <td>{{ row.call_count }}</td>
-                        <td>${{ "%.2f"|format(row.total_cost) }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 {% endblock %}
