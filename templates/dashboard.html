@@ -41,7 +41,11 @@
                             <tbody>
                                 {% for row in table_data %}
                                 <tr>
-                                    <td>{{ row.year_month }}</td>
+                                    <td>
+                                        <a href="{{ url_for('call_details', year=year, month='%02d' | format(row.month)) }}">
+                                            {{ row.year_month }}
+                                        </a>
+                                    </td>
                                     <td>{{ row.call_count }}</td>
                                     <td>${{ "%.2f"|format(row.total_cost) }}</td>
                                 </tr>

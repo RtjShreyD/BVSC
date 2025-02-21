@@ -95,9 +95,12 @@ def dashboard():
 
         # Prepare data for DataTable
         table_data = [
-            {"year_month": f"{current_year}-{str(row.month).zfill(2)}", 
-             "call_count": row.call_count, 
-             "total_cost": row.total_cost or 0}
+            {
+                "year_month": f"{current_year}-{str(row.month).zfill(2)}", 
+                "month": row.month,  # ✅ Add this line
+                "call_count": row.call_count, 
+                "total_cost": row.total_cost or 0
+            }
             for row in monthly_data
         ]
 
@@ -115,7 +118,38 @@ def dashboard():
     except Exception as e:
         return jsonify({"error": "Something went wrong", "details": str(e)}), 500
 
+# 🔵 Drill-down View - Extension-wise Breakdown
+@app.route('/details/<year>/<month>')
+def call_details(year, month):
+    try:
+        print(year)
+        # Fetch call details grouped by extension (CallFrom)
+        extension_data = (
+            db.session.query(
+                BVSCalls.CallFrom.label("extension"),
+                func.COUNT(BVSCalls.id).label("call_count"),
+                func.SUM(BVSCalls.Cost).label("total_cost")
+            )
+            .filter(func.YEAR(BVSCalls.CallTime) == year, func.MONTH(BVSCalls.CallTime) == month)
+            .group_by(BVSCalls.CallFrom)
+            .order_by(func.SUM(BVSCalls.Cost).desc())  # Sort by highest cost
+            .all()
+        )
 
+        # Format data for rendering
+        details = [
+            {"extension": row.extension, 
+             "call_count": row.call_count, 
+             "total_cost": row.total_cost or 0}
+            for row in extension_data
+        ]
+
+        return render_template("details.html", year=year, month=month, details=details)
+
+    except SQLAlchemyError as e:
+        return jsonify({"error": "Database error", "details": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": "Something went wrong", "details": str(e)}), 500
 
 
 if __name__ == '__main__':
