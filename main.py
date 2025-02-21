@@ -73,7 +73,7 @@ def get_calls():
 @app.route('/dashboard')
 def dashboard():
     try:
-        current_year = datetime.now().year
+        current_year = "2018"
 
         # Query to get call count and total cost per month for the current year
         monthly_data = (
@@ -87,8 +87,6 @@ def dashboard():
             .order_by(func.MONTH(BVSCalls.CallTime))
             .all()
         )
-
-        print(monthly_data)
 
         # Prepare data for Chart.js
         labels = [str(row.month) for row in monthly_data]
